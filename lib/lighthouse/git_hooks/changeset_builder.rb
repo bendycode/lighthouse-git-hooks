@@ -1,4 +1,5 @@
 require 'fileutils'
+require 'date'
 module Lighthouse::GitHooks
 
   class ChangesetBuilder < Base
@@ -21,7 +22,7 @@ module Lighthouse::GitHooks
         current_commit = Lighthouse::Changeset.new(:body=>l[3],
                                        :title=>"#{l[2]} committed changeset #{l[0]}",
                                        :revision=>l[0],
-                                       :changed_at=>l[2],
+                                       :changed_at=>DateTime.parse(l[2]),
                                        :project_id => Configuration[:project_id])
       end
       current_commit.save
