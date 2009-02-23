@@ -21,7 +21,8 @@ module Lighthouse::GitHooks
           next
         end
         if current_commit
-         current_commit.save
+          current_commit.changes = current_commit.changes.to_yaml
+          current_commit.save
         end
         data = l.split('|', 6)
        Configuration.login(data[3])
