@@ -19,13 +19,13 @@ module Lighthouse::GitHooks
           next
         end
         current_commit.save if current_commit
-        data = l.split('|', 4)
-        Configuration.login(data[2])
+        data = l.split('|', 6)
+        Configuration.login(data[3])
         current_commit = Lighthouse::Changeset.new(:project_id => Configuration[:project_id].to_i)
-        current_commit.body = data[4]
-        current_commit.title = "#{data[2]} committed changeset #{data[0]}"
-        current_commit.revision = data[0]
-        current_commit.changed_at = DateTime.parse(data[3])
+        current_commit.body = data[5]
+        current_commit.title = "#{data[2]} committed changeset #{data[1]}"
+        current_commit.revision = data[1]
+        current_commit.changed_at = DateTime.parse(data[4])
         current_commit.changes = []
       end
       current_commit.save
