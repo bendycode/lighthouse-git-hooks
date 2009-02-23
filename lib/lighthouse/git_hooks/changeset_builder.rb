@@ -19,11 +19,12 @@ module Lighthouse::GitHooks
         end
         current_commit.save if current_commit
         data = l.split('|', 4)
-        current_commit = Lighthouse::Changeset.new(:body=>l[3],
-                                       :title=>"#{l[2]} committed changeset #{l[0]}",
-                                       :revision=>l[0],
-                                       :changed_at=>l[2],
-                                       :project_id => Configuration[:project_id].to_i)
+        current_commit = Lighthouse::Changeset.new(:project_id => Configuration[:project_id].to_i)
+        current_commit.body = l[3]
+        current_commit.title = "#{l[2]} committed changeset #{l[0]}"
+        current_commit.revision = l[0]
+        current_commit.changed_at = l[2]
+        current_commit.changes = []
       end
       current_commit.save
     rescue Exception => e
