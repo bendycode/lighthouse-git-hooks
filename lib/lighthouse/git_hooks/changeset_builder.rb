@@ -17,7 +17,7 @@ module Lighthouse::GitHooks
       current_commit = nil
       current_user = nil
       @commits.each_line do |l|
-        unless l =~ /^|/
+        unless l =~ /^\|/
           current_commit.changes << l
           next
         end
@@ -28,7 +28,7 @@ module Lighthouse::GitHooks
         $stderr.puts data.inspect
         Configuration.login(data[3])
         current_commit = Lighthouse::Changeset.new(:project_id => Configuration[:project_id].to_i)
-        current_commit.body = data[5]
+        current_commit.body = data[5].strip
         current_commit.title = "#{data[2]} committed changeset #{data[1]}"
         current_commit.revision = data[1]
         current_commit.changed_at = DateTime.parse(data[4])
