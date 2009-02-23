@@ -17,7 +17,7 @@ module Lighthouse::GitHooks
       current_user = nil
       @commits.each_line do |l|
         unless l =~ /^\|/
-          current_commit.changes << l.gsub("\t", " ")
+          current_commit.changes << l.gsub("\t", " ").strip.split(' ',2)
           next
         end
         save_commit current_commit
