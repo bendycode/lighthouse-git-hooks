@@ -23,6 +23,7 @@ module Lighthouse::GitHooks
         if current_commit
           current_commit.changes = current_commit.changes.to_yaml
           current_commit.save
+          $stderr.puts "Saved lighthouse changeset #{current_commit.id}"
         end
         data = l.split('|', 6)
         Configuration.login(data[3])
@@ -36,6 +37,7 @@ module Lighthouse::GitHooks
       end
       current_commit.changes = current_commit.changes.to_yaml
       current_commit.save
+      $stderr.puts "Saved lighthouse changeset #{current_commit.id}"
     rescue Exception => e
       $stderr.puts "Failed to save lighthouse changeset #{current_commit.inspect} because:"
       $stderr.puts e.inspect
