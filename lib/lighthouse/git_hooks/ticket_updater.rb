@@ -1,14 +1,5 @@
 require 'fileutils'
 module Lighthouse::GitHooks
-
-  class Base
-
-    def initialize
-      @repo = Grit::Repo.new(Configuration[:repository_path])
-    end
-
-  end # Base
-
   class TicketUpdate < Base
 
     attr_reader :tickets
