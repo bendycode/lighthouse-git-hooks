@@ -20,10 +20,10 @@ module Lighthouse::GitHooks
           next
         end
         if current_commit
-          Configuration.login(current_user)
-          current_commit.save
+         current_commit.save
         end
         data = l.split('|', 6)
+        Configuration.login(data[3])
         current_commit = Lighthouse::Changeset.new(:project_id => Configuration[:project_id].to_i)
         current_commit.body = data[5]
         current_commit.title = "#{data[2]} committed changeset #{data[1]}"
