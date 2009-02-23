@@ -6,7 +6,7 @@ module Lighthouse::GitHooks
     def initialize(old_rev, new_rev, ref=nil)
       super()
 
-
+      return if old_rev == "0000000000000000000000000000000000000000"
       Dir.chdir Configuration[:repository_path] do
         @commits = `git log --name-status --pretty=format:"|%H|%cn|%ce|%ci|%s" #{old_rev}..#{new_rev}`
         # hash, committer name, commit date, message
