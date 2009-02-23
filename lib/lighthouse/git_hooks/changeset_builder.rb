@@ -12,8 +12,6 @@ module Lighthouse::GitHooks
         # hash, committer name, commit date, message
       end
 
-      $stderr.puts @commits
-
       current_commit = nil
       current_user = nil
       @commits.each_line do |l|
@@ -25,8 +23,7 @@ module Lighthouse::GitHooks
          current_commit.save
         end
         data = l.split('|', 6)
-        $stderr.puts data.inspect
-        Configuration.login(data[3])
+       Configuration.login(data[3])
         current_commit = Lighthouse::Changeset.new(:project_id => Configuration[:project_id].to_i)
         current_commit.body = data[5].strip
         current_commit.title = "#{data[2]} committed changeset #{data[1]}"
@@ -37,9 +34,10 @@ module Lighthouse::GitHooks
       end
       current_commit.save
     rescue Exception => e
-      $stderr.puts "Failed to save changeset #{current_commit.inspect} because:"
+      $stderr.puts "Failed to save lighthouse changeset #{current_commit.inspect} because:"
       $stderr.puts e.inspect
       $stderr.puts e.backtrace.join("\n")
+      $stderr.puts "~~HOWEVER~~ the commits were accepted so that's okay"
     end
 
   end
