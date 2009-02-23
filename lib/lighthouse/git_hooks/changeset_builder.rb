@@ -26,6 +26,9 @@ module Lighthouse::GitHooks
                                        :project_id => Configuration[:project_id].to_i)
       end
       current_commit.save
+    rescue Exception => e
+      $stderr.puts "Failed to save changeset #{current_commit.inspect} because:"
+      $stderr.puts e.inspect
     end
 
   end
