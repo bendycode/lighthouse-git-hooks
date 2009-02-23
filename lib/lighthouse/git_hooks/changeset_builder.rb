@@ -25,7 +25,7 @@ module Lighthouse::GitHooks
           current_commit.save
         end
         data = l.split('|', 6)
-       Configuration.login(data[3])
+        Configuration.login(data[3])
         current_commit = Lighthouse::Changeset.new(:project_id => Configuration[:project_id].to_i)
         current_commit.body = data[5].strip
         current_commit.title = "#{data[2]} committed changeset #{data[1]}"
@@ -34,6 +34,7 @@ module Lighthouse::GitHooks
         current_commit.changes = []
         current_user = data[3]
       end
+      current_commit.changes = current_commit.changes.to_yaml
       current_commit.save
     rescue Exception => e
       $stderr.puts "Failed to save lighthouse changeset #{current_commit.inspect} because:"
