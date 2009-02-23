@@ -20,11 +20,7 @@ module Lighthouse::GitHooks
           current_commit.changes << l
           next
         end
-        if current_commit
-          current_commit.changes = current_commit.changes.to_yaml
-          current_commit.save
-          $stderr.puts "Saved lighthouse changeset #{current_commit.id}"
-        end
+        save_commit current_commit
         data = l.split('|', 6)
         Configuration.login(data[3])
         current_commit = Lighthouse::Changeset.new(:project_id => Configuration[:project_id].to_i)
@@ -35,9 +31,7 @@ module Lighthouse::GitHooks
         current_commit.changes = []
         current_user = data[3]
       end
-      current_commit.changes = current_commit.changes.to_yaml
-      current_commit.save
-      $stderr.puts "Saved lighthouse changeset #{current_commit.id}"
+      save_commit current_commit
     rescue Exception => e
       $stderr.puts "Failed to save lighthouse changeset #{current_commit.inspect} because:"
       $stderr.puts e.inspect
@@ -45,6 +39,14 @@ module Lighthouse::GitHooks
       $stderr.puts "~~HOWEVER~~ the commits were accepted so that's okay"
     end
 
+      def save_commit(commit)
+        commit.changes = commit.changes.to_yaml
+        if commit.save
+          $stderr.puts "Saved lighthouse changeset #{commit.inspect}"
+        else
+          $stderr.puts "Failed to save changeset due to #{commit.errors.inspect}"
+        end
+      end
   end
 end
 
