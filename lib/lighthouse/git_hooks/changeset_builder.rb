@@ -39,14 +39,15 @@ module Lighthouse::GitHooks
       $stderr.puts "~~HOWEVER~~ the commits were accepted so that's okay"
     end
 
-      def save_commit(commit)
-        commit.changes = commit.changes.to_yaml
-        if commit.save
-          $stderr.puts "Saved lighthouse changeset #{commit.inspect}"
-        else
-          $stderr.puts "Failed to save changeset due to #{commit.errors.inspect}"
-        end
+    def save_commit(commit)
+      return unless commit
+      commit.changes = commit.changes.to_yaml
+      if commit.save
+        $stderr.puts "Saved lighthouse changeset #{commit.inspect}"
+      else
+        $stderr.puts "Failed to save changeset due to #{commit.errors.inspect}"
       end
+    end
   end
 end
 
