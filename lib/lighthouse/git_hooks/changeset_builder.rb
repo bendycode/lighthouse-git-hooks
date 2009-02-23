@@ -31,7 +31,7 @@ module Lighthouse::GitHooks
         current_commit.body = data[5].strip
         current_commit.title = "#{data[2]} committed changeset #{data[1]}"
         current_commit.revision = data[1]
-        current_commit.changed_at = DateTime.parse(data[4])
+        current_commit.changed_at = data[4]
         current_commit.changes = []
         current_user = data[3]
       end
