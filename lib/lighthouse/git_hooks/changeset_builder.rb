@@ -23,7 +23,7 @@ module Lighthouse::GitHooks
                                        :title=>"#{l[2]} committed changeset #{l[0]}",
                                        :revision=>l[0],
                                        :changed_at=>DateTime.parse(l[2]),
-                                       :project_id => Configuration[:project_id])
+                                       :project_id => Configuration[:project_id].to_i)
       end
       current_commit.save
     end
