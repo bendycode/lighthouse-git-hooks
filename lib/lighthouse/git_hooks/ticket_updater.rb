@@ -1,34 +1,34 @@
 require 'fileutils'
 module Lighthouse::GitHooks
-    
+
   class Base
-    
+
     def initialize
       @repo = Grit::Repo.new(Configuration[:repository_path])
     end
-    
+
   end # Base
 
   class TicketUpdate < Base
-    
+
     attr_reader :tickets
     attr_reader :real_tickets
 
     AUTHORIZED_KEYS = [ 'assign', 'state', 'tags', 'untag']
-    
+
     def initialize(old_rev, new_rev, ref=nil)
       super()
       @ref = ref
-      
+
       # suppress merge replay
       # git rev-list --first-parent commit1 commit2
-      @commits = Grit::Commit.find_all @repo, "#{old_rev}..#{new_rev}", 
+      @commits = Grit::Commit.find_all @repo, "#{old_rev}..#{new_rev}",
         :first_parent => true, :no_merges => true
-      
+
       @message = ""
       @changes = []
     end
-    
+
     def parse
       @commits.each do |commit|
         commit.message.scan(/\[#([0-9]+)\s*(.*?)\]/) do |match|
@@ -37,17 +37,17 @@ module Lighthouse::GitHooks
       end
       self
     end
-    
+
     def send_changes
-      
+
       @changes.each do |hash_ticket|
         commit = hash_ticket.delete 'commit'
-        
+
         Configuration.login(commit.committer.email)
-        
+
         begin
           puts "updating ticket ##{hash_ticket['number']}"
-          ticket = Lighthouse::Ticket.find(hash_ticket['number'], :params => 
+          ticket = Lighthouse::Ticket.find(hash_ticket['number'], :params =>
             {:project_id => Configuration[:project_id]})
 
           hash_ticket.each_pair do |key, value|
@@ -63,8 +63,10 @@ module Lighthouse::GitHooks
               puts "tags: #{ticket.tags.inspect}"
             when 'untag'
               ticket.tags.delete value
+            when 'state'
+              ticket.state = value.downcase
             else
-              ticket.send "#{key}=".to_sym, value 
+              ticket.send "#{key}=".to_sym, value
             end
           end
           ticket.body = build_message(commit)
@@ -77,7 +79,7 @@ module Lighthouse::GitHooks
     end
 
     protected
-    
+
     def build_message(commit)
       message = commit.message
       diffs = []
@@ -86,7 +88,7 @@ module Lighthouse::GitHooks
       message << "@@@\n#{diffs.join("\n")}\n@@@" if Configuration[:include_diffs] && !diffs.empty?
       message
     end
-    
+
     def parse_ticket(commit, number, params)
       ticket = {'number' => number.to_i, 'commit' => commit}
       unless params.blank?
@@ -96,13 +98,13 @@ module Lighthouse::GitHooks
       end
       ticket
     end
-    
+
     def find_user(nick)
       user = Configuration.users[nick.to_sym]
       raise "user not found #{nick}" unless user
       user.id
     end
-    
+
   end
-  
+
 end
