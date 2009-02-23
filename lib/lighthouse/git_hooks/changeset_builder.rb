@@ -29,6 +29,7 @@ module Lighthouse::GitHooks
     rescue Exception => e
       $stderr.puts "Failed to save changeset #{current_commit.inspect} because:"
       $stderr.puts e.inspect
+      $stderr.puts e.backtrace.join("\n")
     end
 
   end
