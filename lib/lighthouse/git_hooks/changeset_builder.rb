@@ -17,7 +17,7 @@ module Lighthouse::GitHooks
       current_user = nil
       @commits.each_line do |l|
         unless l =~ /^\|/
-          current_commit.changes << l
+          current_commit.changes << l.gsub "\t", " "
           next
         end
         save_commit current_commit
@@ -43,9 +43,9 @@ module Lighthouse::GitHooks
       return unless commit
       commit.changes = commit.changes.to_yaml
       if commit.save
-        $stderr.puts "Saved lighthouse changeset #{commit.inspect}"
+        $stderr.puts "Saved lighthouse changeset #{commit.id}: #{commit.title}"
       else
-        $stderr.puts "Failed to save changeset due to #{commit.errors.inspect}"
+        $stderr.puts "Failed to save changeset due to #{commit.errors.full_messages.join("\n")}"
       end
     end
   end
