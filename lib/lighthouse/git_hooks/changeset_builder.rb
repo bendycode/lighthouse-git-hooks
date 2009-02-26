@@ -18,7 +18,7 @@ module Lighthouse::GitHooks
       @commits.each_line do |l|
         unless l =~ /^\|/
           change_array = l.gsub("\t", " ").strip.split(' ',2)
-          current_commit.changes << change_array.reject{ |e| e.empty? }
+          current_commit.changes << change_array
           next
         end
         save_commit current_commit
@@ -42,7 +42,7 @@ module Lighthouse::GitHooks
 
     def save_commit(commit)
       return unless commit
-      commit.changes = commit.changes.to_yaml
+      commit.changes = commit.changes.reject{ |e| e == [] }.to_yaml
       if commit.save
         $stderr.puts "Saved lighthouse changeset #{commit.id}: #{commit.title}"
       else
